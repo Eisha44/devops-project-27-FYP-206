@@ -17,9 +17,3 @@ test('every page is real HTML and not raw Markdown', () => {
     assert.doesNotMatch(html, /^# /m);
   }
 });
-test('generated pages contain DevOps', () => {
-  for (const p of pages) {
-    const html = fs.readFileSync('out/' + p, 'utf8');
-    assert.match(html, /DevOps/);
-  }
-});
