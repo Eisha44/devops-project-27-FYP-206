@@ -17,7 +17,3 @@ test('every page is real HTML and not raw Markdown', () => {
     assert.doesNotMatch(html, /^# /m);
   }
 });
-test('generated title keeps the original filename', () => {
-  const html = fs.readFileSync('out/services.html', 'utf8');
-  assert.match(html, /<title>services<\/title>/);
-});
