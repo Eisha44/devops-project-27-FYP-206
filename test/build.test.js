@@ -17,3 +17,7 @@ test('every page is real HTML and not raw Markdown', () => {
     assert.doesNotMatch(html, /^# /m);
   }
 });
+
+test('services page uses the renamed output filename', () => {
+  assert.ok(fs.existsSync('out/our-services.html'));
+});
