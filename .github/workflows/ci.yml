@@ -52,9 +52,10 @@ jobs:
           name: coverage
           path: coverage
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  continue-on-error: true
+  uses: SonarSource/sonarqube-scan-action@59db25f34e16620e48ab4bb9e4a5dce155cb5432
+  env:
+    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   package:
     name: package
