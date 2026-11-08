@@ -13,14 +13,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
-
       - run: npm ci
-
       - name: Lint
         run: make lint
 
@@ -29,40 +26,49 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
-
       - run: npm ci
-
       - name: Test with coverage
         run: make coverage
-
       - uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage/lcov.info
           if-no-files-found: error
 
-  package:
-    name: package
-    needs: [lint, test]
+  analyse:
+    name: analyse
+    needs: test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+  package:
+    name: package
+    needs: [lint, test, analyse]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
-
       - run: npm ci
-
       - name: Build and package
         run: make package
-
       - uses: actions/upload-artifact@v4
         with:
           name: devops-pipeline
@@ -75,12 +81,9 @@ jobs:
     if: github.event_name == 'schedule'
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
-
       - run: npm ci
-
       - run: npm audit --audit-level=high
